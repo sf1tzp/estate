@@ -58,3 +58,12 @@ updatekeys:
     if [ -n "$rest" ]; then
         printf '%s\n' "$rest" | xargs -n1 sops --config .sops.yaml updatekeys -y
     fi
+
+fort +ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    system=$(nix eval --raw --impure --expr builtins.currentSystem)
+    installables=$(nix eval --raw "./nixos#packages.${system}" --apply \
+      'p: builtins.concatStringsSep " " (map (n: "./nixos#" + n) (builtins.filter (n: n == "fort" || builtins.substring 0 5 n == "fort-") (builtins.attrNames p)))')
+    # shellcheck disable=SC2086  # one installable per word, by construction
+    nix shell $installables -c fort {{ARGS}}
