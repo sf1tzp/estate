@@ -1,0 +1,42 @@
+# estate
+
+An estate: the forts declared here, built on sfi/forts
+as a flake input. Rendered by `fort init`. The CLI handbook is sfi/forts'
+`docs/`; this file is yours.
+
+```
+estate.toml                  what this checkout is: its name, its git URL, its mesh and zone, its hubs by role (if any)
+forts/<host>.toml            the manifests: one file per fort, the declaration
+nixos/
+  flake.nix                  the hosts, auto-discovered under hosts/; sfi/forts as inputs.forts
+  hosts/<host>/              default.nix + secrets.nix, rendered by fort scaffold, then yours
+  secrets/<host>.yaml        the fort's sops file, written by fort mint
+  certs/ca-root.pem          the estate's CA root, when it runs a private CA — provide it
+  .sops.yaml                 the per-host rules
+flux/
+  clusters/<host>/           the FluxInstance and the cluster's Kustomizations
+  apps/<host>/               the apps root: the estate's flux, or what a layer renders into it
+  hub/<hub host>/            what this estate asks of its monitoring hub, one file per fort
+  infrastructure/            the shared layer every cluster applies
+mesh/
+  peers.json                 who is on the mesh and where; mint adds, dismantle removes
+  ssh_config, known_hosts    rendered from peers.json + the manifests
+provisioning/
+  secrets.yaml               the fleet secrets — create it (provisioning/README.md)
+  pulumi/                    the project file, Pulumi.<host>.yaml per stack, state/
+.sops.yaml                   the flux rules: one per cluster, plus the shared infrastructure rule
+justfile                     the estate's own verbs: fetch-kubeconfig (a fort's read-only ops kubeconfig), updatekeys (the sops files)
+```
+
+## The first fort
+
+1. `nix flake lock ./nixos` — pin the framework.
+2. Provide `nixos/certs/ca-root.pem` when the estate runs a private CA, and seed
+   `flux/infrastructure/configs/monitoring/alertmanager-edge-config.sops.yaml`
+   (the edge Alertmanager's webhook; `sops` it under the shared rule).
+3. Create `provisioning/secrets.yaml` (provisioning/README.md).
+4. Write `forts/<host>.toml` (sfi/forts `docs/manifest.md`), then
+   `fort scaffold <host> --write`, `fort mint <host> --write`, a PR,
+   `fort image <host>`, `fort provision <host> --image <path>`.
+5. `just fetch-kubeconfig <host>` — the fort's read-only ops kubeconfig,
+   to read the cluster from here.

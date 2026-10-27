@@ -1,0 +1,55 @@
+# The estate's gate, on every push: `fort check --all` (tree ↔ manifests,
+# kustomize builds, strict envsubst, the mesh and the links), and a full
+# module-system eval of every host that has a manifest. Both come from
+# the framework this estate pins: `nix run ./nixos#fort` is the CLI at
+# that pin. A layer's gate is its own step after the core's
+# (docs/layers.md; `fort layer add` appends it).
+#
+# Two red-X states are DELIBERATE gates, not breakage: a staged-but-
+# unseeded app tree (listed-but-absent sops files fail kustomize) and a
+# staged-but-unprovisioned host (a missing mesh peer fails nix eval).
+# Such PRs go green when the provisioning replay seeds identity + secrets.
+#
+# This is the .github rendering of the gate fort init writes for a
+# Forgejo forge (.gitea/workflows/checks.yaml): GitHub's runners reach
+# cache.nixos.org directly, so the closure-cache workaround (forts#75)
+# is not carried over. `fort check` reads GITHUB_ACTIONS for its
+# annotations on its own.
+name: checks
+
+on:
+  push:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: DeterminateSystems/nix-installer-action@v16
+
+      - name: The gate (fort check --all)
+        run: nix run ./nixos#fort -- check --all
+
+      - name: Eval every host with a manifest
+        run: |
+          set -euo pipefail
+          # nullglob: with no manifest the bare glob would stay literal and
+          # basename would print "*", which re-globs to every top-level entry.
+          shopt -s nullglob
+          manifests=(forts/*.toml)
+          if [ "${#manifests[@]}" -eq 0 ]; then
+            echo "no fort has a manifest; nothing to eval"
+            exit 0
+          fi
+          fail=0
+          for f in "${manifests[@]}"; do
+            host=$(basename -s .toml "$f")
+            echo "== nix eval $host"
+            if ! nix eval --raw "./nixos#nixosConfigurations.${host}.config.system.build.toplevel.drvPath"; then
+              echo "::error::nix eval failed for ${host}"
+              fail=1
+            fi
+            echo
+          done
+          exit "$fail"

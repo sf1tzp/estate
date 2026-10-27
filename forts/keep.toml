@@ -1,0 +1,13 @@
+mesh_ip = "10.6.0.7"
+
+[cluster]
+datastore = "sqlite"
+
+[shape]
+vcpus = 4
+memory = 8
+disk = "100G"
+
+[libvirt]
+uri = "qemu+ssh://steven@10.0.0.2/system"
+ip = "10.0.0.7"

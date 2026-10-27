@@ -1,0 +1,36 @@
+# Alertmanager config for the edge stack. The receiver is "null" until the
+# estate names a webhook — replace the stringData and re-encrypt:
+#   sops flux/infrastructure/configs/monitoring/alertmanager-edge-config.sops.yaml
+# Encrypted because a webhook URL is a credential.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: alertmanager-edge
+    namespace: monitoring
+type: Opaque
+stringData:
+    alertmanager.yaml: ENC[AES256_GCM,data:IhVz0j5u9NdnBOQPUmH9FAFESvFeqGU/x8+Zp9LsfT4tFC77b2jOAKtATBhFldLvAIW0xT6z,iv:PdW9kn7jKx5QjZ9zPVUrpCUpUVqq+YK2vwTxAnBHw18=,tag:yufLK0lpA0nxGPJZLcs0ng==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBuUHNUL3lkYjVpSXJidlhs
+            elNBdEZPRUZGODl2OEZBK0ZBeWgxWVk3N3hjCkdOdUdIYzZScGhrRy9zUTJUb0Ew
+            QVZWVjFBY3JxWll5VWVzMjlIbVBBcWMKLS0tIE9sR2JERnY0OE1aMWM0cjBCREFr
+            eEdzcU1HblU3bXpsbHRvU1grNlVjZG8KLKjcsB2AExGOujE9mCt578qL+/lubHC0
+            e7MsaxgZUuepyv7g3RbuSByket271nBqUI1Lo1cXcV0/C9mCyUVWcQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1d6vp8lqu57d2um9u04asg9gm2r3nrjk932f02ddxc2sm5u34tprqtzzlvp
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5ZTQ5S252ZmZwZDFHTDRZ
+            c0Y4eW8vL3NqUGlDSGN6bXNCQjZ3SVk2SGxFCjlRWkpqM1JnazVmZ1NyS1RuOUdj
+            VmNBVTI5eEZManRBeEZiVHArbGZoUTgKLS0tIC93Zk9uK1dHbDJpdDJGeXBoaG9H
+            MzdVTDlLcTlvR2RhZjFqcDFQK01sMVEKj0KGNakf7QJVX+ls6si/DBuP9Kotv9e8
+            9KoiAHpzfLEaRJ2dJWnYbkoznwGPR+GaAvcm6r9e5ReZjB55DgVSAw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age14cetx5dmajxw9qq2vdjpn3nuf3z4fkkhkx4y9e20ygjvrl0auunsnurpr5
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-27T04:07:54Z"
+    mac: ENC[AES256_GCM,data:TUswiZnRn/ZKn0goREASbto7vq8YeUipjqXarbLCGHCwG0RWPR6V+bYnfgjmuwqKEnvG4aq25jATasbay+9NtLK+V48EZcASj0AFHtA5Ls7cKj7RHTRYQcYfzj1gyYFZ1yAqn7kg8BuEMzTYFtLPJid1ESKIZiUbPZ8X0JrUm+c=,iv:fe/IipojKeCXPJj3Cb8gMtdVcozLEsMlUr6qwjRms9o=,tag:d1XmKCZuP8foSZrfkUkEiA==,type:str]
+    version: 3.13.3
