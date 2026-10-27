@@ -1,5 +1,7 @@
 # estate
 
+> Note: this repo is a [forts estate](https://github.com/streetfortress/forts). It was created to validate the forts lifecycle outside of our internal infrastructure. The last few commits were largely _mechanical_ changes driven by the forts cli.
+
 An estate: the forts declared here, built on sfi/forts
 as a flake input. Rendered by `fort init`. The CLI handbook is sfi/forts'
 `docs/`; this file is yours.
