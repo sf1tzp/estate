@@ -1,5 +1,0 @@
-encryptionsalt: v1:YMY6BEMC9mU=:v1:XatKPQcdfA+IBFd7:4X9919mDWTUt0eveud30Pvr+YgfgYA==
-config:
-  forts:libvirtUri: qemu+ssh://steven@10.0.0.2/system?sshauth=privkey&keyfile=/Users/steven/.ssh/id_ed25519
-  forts:seed: nocloud
-  forts:imageId: /Users/steven/.cache/forts/keep-nixos.qcow2
